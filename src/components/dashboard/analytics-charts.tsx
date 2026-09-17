@@ -10,6 +10,8 @@ interface Props {
   statusData: Array<{ name: string; value: number; fill: string }>;
 }
 
+// Recharts requires plain style objects/props for its internal SVG and
+// tooltip rendering — these can't be expressed as Tailwind classes.
 const tooltipStyle = {
   border: "1px solid var(--color-border)",
   borderRadius: "10px",
@@ -20,15 +22,15 @@ const tooltipStyle = {
 
 export function AnalyticsCharts({ monthlyData, statusData }: Props) {
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "1fr 300px", gap: "16px" }}>
+    <div className="grid gap-4 grid-cols-[1fr_300px]">
       {/* Bar chart */}
-      <div style={{ background: "white", border: "1px solid var(--color-border)", borderRadius: "16px", padding: "24px" }}>
-        <p style={{ fontFamily: "var(--font-display)", fontSize: "13px", fontWeight: 700, color: "var(--color-ink)", marginBottom: "20px", letterSpacing: "-0.01em" }}>
+      <div className="bg-white border border-[var(--color-border)] rounded-2xl p-6">
+        <p className="font-bold text-[13px] text-[var(--color-ink)] mb-5 tracking-[-0.01em]">
           Shipments over time
         </p>
         {monthlyData.length === 0 ? (
-          <div style={{ height: "200px", display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <p style={{ fontSize: "13px", color: "var(--color-ink-muted)" }}>No data yet</p>
+          <div className="h-[200px] flex items-center justify-center">
+            <p className="text-[13px] text-[var(--color-ink-muted)]">No data yet</p>
           </div>
         ) : (
           <ResponsiveContainer width="100%" height={220}>
@@ -45,13 +47,13 @@ export function AnalyticsCharts({ monthlyData, statusData }: Props) {
       </div>
 
       {/* Donut */}
-      <div style={{ background: "white", border: "1px solid var(--color-border)", borderRadius: "16px", padding: "24px" }}>
-        <p style={{ fontFamily: "var(--font-display)", fontSize: "13px", fontWeight: 700, color: "var(--color-ink)", marginBottom: "20px", letterSpacing: "-0.01em" }}>
+      <div className="bg-white border border-[var(--color-border)] rounded-2xl p-6">
+        <p className="font-bold text-[13px] text-[var(--color-ink)] mb-5 tracking-[-0.01em]">
           Status breakdown
         </p>
         {statusData.length === 0 ? (
-          <div style={{ height: "200px", display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <p style={{ fontSize: "13px", color: "var(--color-ink-muted)" }}>No data yet</p>
+          <div className="h-[200px] flex items-center justify-center">
+            <p className="text-[13px] text-[var(--color-ink-muted)]">No data yet</p>
           </div>
         ) : (
           <ResponsiveContainer width="100%" height={220}>

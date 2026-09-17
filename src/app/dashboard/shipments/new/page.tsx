@@ -4,17 +4,17 @@ import Link from "next/link";
 
 export default function NewShipmentPage() {
   return (
-    <div style={{ padding: "36px 40px", maxWidth: "900px", fontFamily: "var(--font-body)" }}>
-      <Link href="/dashboard/shipments" style={{ display: "inline-flex", alignItems: "center", gap: "6px", fontSize: "12px", color: "var(--color-ink-muted)", textDecoration: "none", marginBottom: "24px", fontWeight: 500 }}>
+    <div className="p-10 max-w-[900px]">
+      <Link href="/dashboard/shipments" className="inline-flex items-center gap-1.5 text-xs text-[var(--color-ink-muted)] no-underline mb-6 font-medium">
         <ArrowLeft size={13} /> Back
       </Link>
-      <h1 style={{ fontFamily: "var(--font-display)", fontSize: "22px", fontWeight: 800, color: "var(--color-ink)", letterSpacing: "-0.03em", marginBottom: "4px" }}>
+      <h1 className="font-extrabold text-[22px] text-[var(--color-ink)] tracking-[-0.03em] mb-1">
         New Shipment
       </h1>
-      <p style={{ fontSize: "13px", color: "var(--color-ink-muted)", marginBottom: "28px", fontWeight: 300 }}>
+      <p className="text-[13px] text-[var(--color-ink-muted)] mb-8 font-light">
         A unique tracking ID will be generated automatically.
       </p>
-      <div style={{ background: "white", border: "1px solid var(--color-border)", borderRadius: "16px", padding: "28px" }}>
+      <div className="bg-white border border-[var(--color-border)] rounded-2xl p-6">
         <ShipmentForm />
       </div>
     </div>

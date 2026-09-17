@@ -1,10 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { LayoutDashboard, Package, BarChart3, LogOut, ExternalLink } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
-import { useRouter } from "next/navigation";
+import { BrandLogo } from "@/components/brand-logo";
 
 const nav = [
   { href: "/dashboard",           icon: LayoutDashboard, label: "Overview" },
@@ -12,7 +12,11 @@ const nav = [
   { href: "/dashboard/analytics", icon: BarChart3,        label: "Analytics" },
 ];
 
-export function Sidebar() {
+interface Props {
+  userEmail?: string | null;
+}
+
+export function Sidebar({ userEmail }: Props) {
   const pathname = usePathname();
   const router = useRouter();
 
@@ -22,54 +26,39 @@ export function Sidebar() {
     router.push("/login");
   }
 
+  const initial = userEmail?.trim()?.[0]?.toUpperCase() ?? "A";
+
   return (
-    <aside style={{
-      width: "220px",
-      flexShrink: 0,
-      background: "white",
-      borderRight: "1px solid var(--color-border)",
-      display: "flex",
-      flexDirection: "column",
-      minHeight: "100vh",
-    }}>
+    <aside className="w-56 shrink-0 h-full bg-white border-r border-[var(--color-border)] flex flex-col">
       {/* Logo */}
-      <div style={{ padding: "24px 20px", borderBottom: "1px solid var(--color-border)" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-          <div style={{ width: "30px", height: "30px", background: "var(--color-accent)", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-            <svg width="14" height="14" fill="none" viewBox="0 0 24 24">
-              <path d="M5 17H3a2 2 0 01-2-2V5a2 2 0 012-2h11a2 2 0 012 2v3" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              <rect x="9" y="11" width="14" height="10" rx="2" stroke="white" strokeWidth="2"/>
-              <circle cx="12" cy="21" r="1" fill="white" stroke="white"/>
-              <circle cx="20" cy="21" r="1" fill="white" stroke="white"/>
-            </svg>
-          </div>
-          <span style={{ fontFamily: "var(--font-display)", fontSize: "14px", fontWeight: 700, color: "var(--color-ink)", letterSpacing: "-0.02em" }}>
+      <div className="py-5 px-[18px] border-b border-[var(--color-border)] shrink-0">
+        <div className="flex items-center gap-2.5">
+          <BrandLogo size={30} />
+          <span className="font-bold text-sm text-[var(--color-ink)] tracking-[-0.02em]">
             SwiftTrack
           </span>
         </div>
       </div>
 
       {/* Nav */}
-      <nav style={{ flex: 1, padding: "12px 10px" }}>
+      <nav className="flex-1 min-h-0 overflow-y-auto py-[18px] px-3">
+        <p className="text-[10.5px] font-bold tracking-[0.08em] uppercase text-[#c0c0b8] px-2.5 mb-2.5">
+          Menu
+        </p>
         {nav.map((item) => {
           const active = item.href === "/dashboard" ? pathname === "/dashboard" : pathname.startsWith(item.href);
           return (
-            <Link key={item.href} href={item.href} style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "10px",
-              padding: "9px 12px",
-              borderRadius: "9px",
-              marginBottom: "2px",
-              fontSize: "13px",
-              fontWeight: active ? 600 : 400,
-              color: active ? "var(--color-ink)" : "var(--color-ink-muted)",
-              background: active ? "var(--color-surface)" : "transparent",
-              textDecoration: "none",
-              transition: "all 0.15s",
-              fontFamily: "var(--font-body)",
-            }}>
-              <item.icon size={15} strokeWidth={active ? 2.5 : 1.75} />
+            <Link
+              key={item.href}
+              href={item.href}
+              className={`relative flex items-center gap-2.5 py-[9px] pr-3 pl-3.5 rounded-[9px] mb-0.5 text-[13px] no-underline transition-[background,color] duration-150 ${
+                active ? "font-semibold text-[var(--color-ink)] bg-[var(--color-surface)]" : "font-normal text-[var(--color-ink-muted)] bg-transparent"
+              }`}
+            >
+              {active && (
+                <span className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-4 rounded-[0_3px_3px_0] bg-[var(--color-accent)]" />
+              )}
+              <item.icon size={16} strokeWidth={active ? 2.25 : 1.75} color={active ? "var(--color-accent)" : undefined} />
               {item.label}
             </Link>
           );
@@ -77,31 +66,34 @@ export function Sidebar() {
       </nav>
 
       {/* Bottom */}
-      <div style={{ padding: "10px", borderTop: "1px solid var(--color-border)" }}>
-        <Link href="/" target="_blank" style={{
-          display: "flex", alignItems: "center", gap: "10px",
-          padding: "9px 12px", borderRadius: "9px",
-          fontSize: "13px", color: "var(--color-ink-muted)",
-          textDecoration: "none",
-          transition: "all 0.15s",
-          marginBottom: "2px",
-        }}>
-          <ExternalLink size={14} strokeWidth={1.75} />
-          Public Tracker
-        </Link>
-        <button onClick={handleLogout} style={{
-          width: "100%",
-          display: "flex", alignItems: "center", gap: "10px",
-          padding: "9px 12px", borderRadius: "9px",
-          fontSize: "13px", color: "var(--color-ink-muted)",
-          background: "none", border: "none", cursor: "pointer",
-          textAlign: "left",
-          fontFamily: "var(--font-body)",
-          transition: "all 0.15s",
-        }}>
-          <LogOut size={14} strokeWidth={1.75} />
-          Sign out
-        </button>
+      <div className="border-t border-[var(--color-border)] shrink-0">
+        {userEmail && (
+          <div className="flex items-center gap-2.5 pt-3.5 px-4 pb-2.5">
+            <div className="w-7 h-7 rounded-full shrink-0 bg-[var(--color-accent-light)] text-[var(--color-accent)] flex items-center justify-center font-bold text-xs">
+              {initial}
+            </div>
+            <span className="text-[12.5px] font-medium text-[var(--color-ink)] overflow-hidden text-ellipsis whitespace-nowrap">
+              {userEmail}
+            </span>
+          </div>
+        )}
+        <div className="pt-1.5 px-2.5 pb-2.5">
+          <Link
+            href="/"
+            target="_blank"
+            className="flex items-center gap-2.5 py-[9px] px-3 rounded-[9px] text-[13px] text-[var(--color-ink-muted)] no-underline transition-colors duration-150 mb-0.5"
+          >
+            <ExternalLink size={14} strokeWidth={1.75} />
+            Public tracker
+          </Link>
+          <button
+            onClick={handleLogout}
+            className="w-full flex items-center gap-2.5 py-[9px] px-3 rounded-[9px] text-[13px] text-[var(--color-ink-muted)] bg-transparent border-none cursor-pointer text-left transition-[background,color] duration-150"
+          >
+            <LogOut size={14} strokeWidth={1.75} />
+            Sign out
+          </button>
+        </div>
       </div>
     </aside>
   );

@@ -13,17 +13,17 @@ export default async function EditShipmentPage({ params }: PageProps) {
   catch { notFound(); }
 
   return (
-    <div style={{ padding: "36px 40px", maxWidth: "900px", fontFamily: "var(--font-body)" }}>
-      <Link href={`/dashboard/shipments/${id}`} style={{ display: "inline-flex", alignItems: "center", gap: "6px", fontSize: "12px", color: "var(--color-ink-muted)", textDecoration: "none", marginBottom: "24px", fontWeight: 500 }}>
+    <div className="p-10 max-w-[900px]">
+      <Link href={`/dashboard/shipments/${id}`} className="inline-flex items-center gap-1.5 text-xs text-[var(--color-ink-muted)] no-underline mb-6 font-medium">
         <ArrowLeft size={13} /> Back to shipment
       </Link>
-      <h1 style={{ fontFamily: "var(--font-display)", fontSize: "22px", fontWeight: 800, color: "var(--color-ink)", letterSpacing: "-0.03em", marginBottom: "4px" }}>
+      <h1 className="font-extrabold text-[22px] text-[var(--color-ink)] tracking-[-0.03em] mb-1">
         Edit Shipment
       </h1>
-      <p style={{ fontFamily: "monospace", fontSize: "12px", color: "var(--color-ink-muted)", marginBottom: "28px" }}>
+      <p className="font-mono text-xs text-[var(--color-ink-muted)] mb-8">
         {shipment.tracking_id}
       </p>
-      <div style={{ background: "white", border: "1px solid var(--color-border)", borderRadius: "16px", padding: "28px" }}>
+      <div className="bg-white border border-[var(--color-border)] rounded-2xl p-6">
         <ShipmentForm shipment={shipment} />
       </div>
     </div>

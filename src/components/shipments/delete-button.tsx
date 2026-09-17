@@ -24,42 +24,36 @@ export function DeleteButton({ shipmentId }: { shipmentId: string }) {
     <>
       <button
         onClick={() => setOpen(true)}
-        style={{
-          display: "inline-flex", alignItems: "center", gap: "6px",
-          padding: "8px 14px",
-          border: "1px solid #fdd5c8", borderRadius: "9px",
-          fontSize: "12px", fontWeight: 600, color: "var(--color-accent)",
-          background: "#fff8f5", cursor: "pointer", fontFamily: "var(--font-body)",
-        }}
+        className="inline-flex items-center gap-1.5 py-2 px-3.5 border border-[#fdd5c8] rounded-[9px] text-xs font-semibold text-[var(--color-accent)] bg-[#fff8f5] cursor-pointer"
       >
         <Trash2 size={12} /> Delete
       </button>
 
       {open && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.4)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 50, padding: "16px" }}>
-          <div style={{ background: "white", borderRadius: "18px", width: "100%", maxWidth: "380px", padding: "28px", fontFamily: "var(--font-body)", boxShadow: "0 24px 48px rgba(0,0,0,0.12)" }}>
-            <div style={{ display: "flex", gap: "14px", alignItems: "flex-start", marginBottom: "24px" }}>
-              <div style={{ width: "40px", height: "40px", borderRadius: "50%", background: "#fff4f1", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-[18px] w-full max-w-[380px] p-7 shadow-[0_24px_48px_rgba(0,0,0,0.12)]">
+            <div className="flex gap-3.5 items-start mb-6">
+              <div className="w-10 h-10 rounded-full bg-[#fff4f1] flex items-center justify-center shrink-0">
                 <AlertTriangle size={18} color="var(--color-accent)" />
               </div>
               <div>
-                <p style={{ fontFamily: "var(--font-display)", fontSize: "15px", fontWeight: 700, color: "var(--color-ink)", marginBottom: "6px" }}>Delete shipment?</p>
-                <p style={{ fontSize: "13px", color: "var(--color-ink-muted)", fontWeight: 300, lineHeight: 1.5 }}>
+                <p className="font-bold text-[15px] text-[var(--color-ink)] mb-1.5">Delete shipment?</p>
+                <p className="text-[13px] text-[var(--color-ink-muted)] font-light leading-normal">
                   This will permanently remove the shipment and all tracking history. This cannot be undone.
                 </p>
               </div>
             </div>
-            <div style={{ display: "flex", gap: "10px" }}>
+            <div className="flex gap-2.5">
               <button
                 onClick={handleDelete}
                 disabled={isPending}
-                style={{ flex: 1, padding: "11px", background: "var(--color-accent)", color: "white", border: "none", borderRadius: "9px", fontSize: "13px", fontWeight: 700, fontFamily: "var(--font-display)", cursor: isPending ? "not-allowed" : "pointer", opacity: isPending ? 0.6 : 1 }}
+                className="flex-1 py-2.5 bg-[var(--color-accent)] text-white border-none rounded-[9px] text-[13px] font-bold cursor-pointer disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {isPending ? "Deleting…" : "Yes, delete"}
               </button>
               <button
                 onClick={() => setOpen(false)}
-                style={{ flex: 1, padding: "11px", background: "white", color: "var(--color-ink)", border: "1.5px solid var(--color-border)", borderRadius: "9px", fontSize: "13px", fontWeight: 600, cursor: "pointer", fontFamily: "var(--font-body)" }}
+                className="flex-1 py-2.5 bg-white text-[var(--color-ink)] border-[1.5px] border-[var(--color-border)] rounded-[9px] text-[13px] font-semibold cursor-pointer"
               >
                 Cancel
               </button>

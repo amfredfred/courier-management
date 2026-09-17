@@ -66,7 +66,7 @@ export async function getShipmentByTrackingId(trackingId: string) {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("shipments")
-    .select(`*, tracking_events(*)`)
+    .select(`*, tracking_events(*), attachments(*)`)
     .eq("tracking_id", trackingId)
     .single();
   if (error) return null;

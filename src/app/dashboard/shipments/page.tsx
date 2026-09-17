@@ -19,24 +19,20 @@ export default async function ShipmentsPage({ searchParams }: PageProps) {
   const totalPages = Math.ceil(total / limit);
 
   return (
-    <div style={{ padding: "36px 40px", fontFamily: "var(--font-body)" }}>
-      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: "28px" }}>
+    <div className="p-10">
+      <div className="flex items-start justify-between mb-8">
         <div>
-          <h1 style={{ fontFamily: "var(--font-display)", fontSize: "24px", fontWeight: 800, color: "var(--color-ink)", letterSpacing: "-0.03em", marginBottom: "4px" }}>
+          <h1 className="font-extrabold text-2xl text-[var(--color-ink)] tracking-[-0.03em] mb-1">
             Shipments
           </h1>
-          <p style={{ fontSize: "13px", color: "var(--color-ink-muted)", fontWeight: 300 }}>
+          <p className="text-[13px] text-[var(--color-ink-muted)] font-light">
             {total} total
           </p>
         </div>
-        <Link href="/dashboard/shipments/new" style={{
-          display: "inline-flex", alignItems: "center", gap: "7px",
-          padding: "10px 18px",
-          background: "var(--color-ink)", color: "white",
-          borderRadius: "10px", textDecoration: "none",
-          fontSize: "13px", fontWeight: 600, fontFamily: "var(--font-display)",
-          letterSpacing: "-0.01em",
-        }}>
+        <Link
+          href="/dashboard/shipments/new"
+          className="inline-flex items-center gap-[7px] py-2.5 px-[18px] bg-[var(--color-ink)] text-white rounded-[10px] no-underline text-[13px] font-semibold tracking-[-0.01em]"
+        >
           <Plus size={14} strokeWidth={2.5} />
           New shipment
         </Link>

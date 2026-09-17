@@ -12,14 +12,7 @@ export function StatusUpdateClient({ shipmentId, currentStatus }: Props) {
     <>
       <button
         onClick={() => setOpen(true)}
-        style={{
-          display: "inline-flex", alignItems: "center", gap: "6px",
-          padding: "8px 14px",
-          background: "var(--color-ink)", color: "white",
-          border: "none", borderRadius: "9px", cursor: "pointer",
-          fontSize: "12px", fontWeight: 600, fontFamily: "var(--font-display)",
-          letterSpacing: "-0.01em",
-        }}
+        className="inline-flex items-center gap-1.5 py-2 px-3.5 bg-[var(--color-ink)] text-white border-none rounded-[9px] cursor-pointer text-xs font-semibold tracking-[-0.01em]"
       >
         Update status
       </button>

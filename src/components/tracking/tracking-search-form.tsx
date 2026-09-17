@@ -7,69 +7,23 @@ export function TrackingSearchForm() {
   const inputRef = useRef<HTMLInputElement>(null);
 
   return (
-    <form
-      method="GET"
-      action="/"
-      style={{ display: "flex", gap: "10px", maxWidth: "560px", margin: "0 auto" }}
-    >
-      <div style={{ flex: 1, position: "relative" }}>
+    <form method="GET" action="/" className="flex gap-2.5 max-w-[560px] mx-auto">
+      <div className="flex-1 relative">
         <Search
           size={15}
-          style={{
-            position: "absolute",
-            left: "15px",
-            top: "50%",
-            transform: "translateY(-50%)",
-            color: "#c0c0b8",
-            pointerEvents: "none",
-          }}
+          className="absolute left-[15px] top-1/2 -translate-y-1/2 text-[#c0c0b8] pointer-events-none"
         />
         <input
           ref={inputRef}
           name="track"
           autoFocus
           placeholder="e.g. CMS-LK9A3F-XZ7K"
-          style={{
-            width: "100%",
-            padding: "14px 16px 14px 42px",
-            border: "2px solid var(--color-border)",
-            borderRadius: "12px",
-            fontSize: "15px",
-            fontFamily: "var(--font-body)",
-            color: "var(--color-ink)",
-            background: "white",
-            outline: "none",
-            letterSpacing: "0.02em",
-            transition: "border-color 0.2s, box-shadow 0.2s",
-          }}
-          onFocus={(e) => {
-            e.target.style.borderColor = "var(--color-ink)";
-            e.target.style.boxShadow = "0 0 0 4px rgba(13,13,13,0.06)";
-          }}
-          onBlur={(e) => {
-            e.target.style.borderColor = "var(--color-border)";
-            e.target.style.boxShadow = "none";
-          }}
+          className="w-full py-3.5 pr-4 pl-[42px] border-2 border-[var(--color-border)] rounded-xl text-[15px] text-[var(--color-ink)] bg-white outline-none tracking-[0.02em] transition-[border-color,box-shadow] duration-200 focus:border-[var(--color-ink)] focus:shadow-[0_0_0_4px_rgba(13,13,13,0.06)]"
         />
       </div>
       <button
         type="submit"
-        style={{
-          padding: "14px 26px",
-          background: "var(--color-ink)",
-          color: "white",
-          border: "none",
-          borderRadius: "12px",
-          fontSize: "14px",
-          fontWeight: 700,
-          fontFamily: "var(--font-display)",
-          cursor: "pointer",
-          whiteSpace: "nowrap",
-          letterSpacing: "-0.02em",
-          transition: "opacity 0.15s",
-        }}
-        onMouseEnter={(e) => { (e.target as HTMLButtonElement).style.opacity = "0.85"; }}
-        onMouseLeave={(e) => { (e.target as HTMLButtonElement).style.opacity = "1"; }}
+        className="py-3.5 px-[26px] bg-[var(--color-ink)] text-white border-none rounded-xl text-sm font-bold cursor-pointer whitespace-nowrap tracking-[-0.02em] transition-opacity duration-150 hover:opacity-85"
       >
         Track
       </button>

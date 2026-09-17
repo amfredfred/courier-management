@@ -6,17 +6,17 @@ export default function DashboardError({ error, reset }: { error: Error; reset: 
   useEffect(() => { console.error(error); }, [error]);
 
   return (
-    <div style={{ padding: "64px 40px", fontFamily: "var(--font-body)" }}>
-      <div style={{ maxWidth: "360px" }}>
-        <p style={{ fontFamily: "var(--font-display)", fontSize: "20px", fontWeight: 700, color: "var(--color-ink)", marginBottom: "8px" }}>
+    <div className="py-16 px-10">
+      <div className="max-w-[360px]">
+        <p className="text-xl font-bold text-[var(--color-ink)] mb-2">
           Something went wrong
         </p>
-        <p style={{ fontSize: "13px", color: "var(--color-ink-muted)", marginBottom: "20px", fontWeight: 300 }}>
+        <p className="text-[13px] text-[var(--color-ink-muted)] mb-5 font-light">
           {error.message || "An unexpected error occurred."}
         </p>
         <button
           onClick={reset}
-          style={{ padding: "10px 20px", background: "var(--color-ink)", color: "white", border: "none", borderRadius: "9px", fontSize: "13px", fontWeight: 600, fontFamily: "var(--font-display)", cursor: "pointer" }}
+          className="py-2.5 px-5 bg-[var(--color-ink)] text-white border-none rounded-[9px] text-[13px] font-semibold cursor-pointer"
         >
           Try again
         </button>

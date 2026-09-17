@@ -1,6 +1,5 @@
 import type { Shipment, ShipmentStatus, TrackingEvent } from "@/types";
 import { formatDate, formatDateShort } from "@/lib/utils";
-import Image from "next/image";
 
 interface Props { shipment: Shipment }
 
@@ -28,157 +27,127 @@ export function PublicTrackingResult({ shipment }: Props) {
   const latestEvent = events[0];
   const attachments = shipment.attachments ?? [];
 
+  const topStripBg = isException
+    ? "bg-[#fff4f1]"
+    : shipment.status === "delivered"
+    ? "bg-[var(--color-success-light)]"
+    : "bg-[#fafaf8]";
+
   return (
-    <div className="space-y-4">
-      {/* Status hero card */}
-      <div style={{
-        background: "white",
-        border: "1px solid var(--color-border)",
-        borderRadius: "20px",
-        overflow: "hidden",
-      }}>
-        {/* Top strip */}
-        <div style={{
-          background: isException ? "#fff4f1" : shipment.status === "delivered" ? "var(--color-success-light)" : "#fafaf8",
-          borderBottom: "1px solid var(--color-border)",
-          padding: "24px 28px",
-          display: "flex",
-          alignItems: "flex-start",
-          justifyContent: "space-between",
-          gap: "16px",
-          flexWrap: "wrap",
-        }}>
-          <div>
-            <p style={{ fontSize: "11px", fontWeight: 600, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--color-ink-muted)", marginBottom: "6px" }}>
-              Tracking Number
-            </p>
-            <p style={{ fontFamily: "monospace", fontSize: "18px", fontWeight: 700, color: "var(--color-ink)", letterSpacing: "0.04em" }}>
-              {shipment.tracking_id}
-            </p>
-          </div>
-          <StatusPill status={shipment.status} />
+    <div className="bg-white border border-[var(--color-border)] rounded-[20px] overflow-hidden">
+      {/* Top strip */}
+      <div className={`p-6 gap-4 border-b border-[var(--color-border)] flex items-start justify-between flex-wrap ${topStripBg}`}>
+        <div>
+          <p className="mb-1.5 text-[11px] font-semibold tracking-[0.1em] uppercase text-[var(--color-ink-muted)]">
+            Tracking Number
+          </p>
+          <p className="font-mono text-lg font-bold text-[var(--color-ink)] tracking-[0.04em]">
+            {shipment.tracking_id}
+          </p>
         </div>
-
-        {/* Route */}
-        <div style={{ padding: "24px 28px", borderBottom: "1px solid var(--color-border)", display: "grid", gridTemplateColumns: "1fr auto 1fr", gap: "16px", alignItems: "center" }}>
-          <div>
-            <p style={{ fontSize: "11px", fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--color-ink-muted)", marginBottom: "6px" }}>From</p>
-            <p style={{ fontSize: "15px", fontWeight: 600, color: "var(--color-ink)", fontFamily: "var(--font-display)" }}>{shipment.sender_name}</p>
-            <p style={{ fontSize: "13px", color: "var(--color-ink-muted)", marginTop: "2px" }}>{shipment.sender_address}</p>
-          </div>
-          <div style={{ textAlign: "center" }}>
-            <svg width="48" height="16" fill="none" viewBox="0 0 48 16">
-              <path d="M0 8h44M38 2l6 6-6 6" stroke="#d0d0cc" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </div>
-          <div style={{ textAlign: "right" }}>
-            <p style={{ fontSize: "11px", fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--color-ink-muted)", marginBottom: "6px" }}>To</p>
-            <p style={{ fontSize: "15px", fontWeight: 600, color: "var(--color-ink)", fontFamily: "var(--font-display)" }}>{shipment.receiver_name}</p>
-            <p style={{ fontSize: "13px", color: "var(--color-ink-muted)", marginTop: "2px" }}>{shipment.receiver_address}</p>
-          </div>
-        </div>
-
-        {/* Est. delivery */}
-        {shipment.estimated_delivery && !isException && (
-          <div style={{ padding: "16px 28px", borderBottom: "1px solid var(--color-border)", display: "flex", alignItems: "center", gap: "10px" }}>
-            <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
-              <rect x="3" y="4" width="18" height="18" rx="2" stroke="#b0b0a8" strokeWidth="1.5"/>
-              <path d="M16 2v4M8 2v4M3 10h18" stroke="#b0b0a8" strokeWidth="1.5" strokeLinecap="round"/>
-            </svg>
-            <span style={{ fontSize: "13px", color: "var(--color-ink-muted)" }}>
-              Estimated delivery: <strong style={{ color: "var(--color-ink)" }}>{formatDateShort(shipment.estimated_delivery)}</strong>
-            </span>
-          </div>
-        )}
-
-        {/* Progress pipeline */}
-        {!isException && (
-          <div style={{ padding: "28px" }}>
-            <div style={{ display: "flex", alignItems: "flex-start", gap: "0", position: "relative" }}>
-              {PIPELINE.map((step, i) => {
-                const done = currentRank >= i;
-                const active = currentRank === i;
-                const isLast = i === PIPELINE.length - 1;
-                return (
-                  <div key={step.status} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", position: "relative" }}>
-                    {/* Connector line */}
-                    {!isLast && (
-                      <div style={{
-                        position: "absolute",
-                        top: "16px",
-                        left: "50%",
-                        width: "100%",
-                        height: "2px",
-                        background: currentRank > i ? "var(--color-accent)" : "#e8e8e4",
-                        transition: "background 0.3s",
-                      }} />
-                    )}
-                    {/* Node */}
-                    <div style={{
-                      width: "32px", height: "32px",
-                      borderRadius: "50%",
-                      border: `2px solid ${done ? (active && shipment.status !== "delivered" ? "var(--color-accent)" : "#1a7a45") : "#e0e0da"}`,
-                      background: done ? (active && shipment.status !== "delivered" ? "var(--color-accent)" : "#1a7a45") : "white",
-                      display: "flex", alignItems: "center", justifyContent: "center",
-                      zIndex: 1,
-                      position: "relative",
-                      flexShrink: 0,
-                      transition: "all 0.3s",
-                    }}>
-                      {done ? (
-                        active && shipment.status !== "delivered" ? (
-                          <div style={{ width: "8px", height: "8px", borderRadius: "50%", background: "white" }} />
-                        ) : (
-                          <svg width="12" height="12" fill="none" viewBox="0 0 24 24">
-                            <path d="M5 13l4 4L19 7" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
-                          </svg>
-                        )
-                      ) : (
-                        <div style={{ width: "6px", height: "6px", borderRadius: "50%", background: "#d0d0cc" }} />
-                      )}
-                    </div>
-                    {/* Label */}
-                    <p style={{
-                      fontSize: "10px",
-                      fontWeight: done ? 600 : 400,
-                      color: done ? "var(--color-ink)" : "#b8b8b2",
-                      marginTop: "8px",
-                      textAlign: "center",
-                      letterSpacing: "0.01em",
-                      lineHeight: 1.3,
-                      fontFamily: "var(--font-display)",
-                      maxWidth: "60px",
-                    }}>
-                      {step.label}
-                    </p>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        )}
-
-        {/* Exception banner */}
-        {isException && (
-          <div style={{ margin: "24px 28px 24px", padding: "14px 18px", background: "#fff4f1", border: "1px solid #fdd5c8", borderRadius: "12px", display: "flex", gap: "10px", alignItems: "flex-start" }}>
-            <svg width="16" height="16" fill="none" viewBox="0 0 24 24" style={{ marginTop: "1px", flexShrink: 0 }}>
-              <path d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" stroke="var(--color-accent)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-            <div>
-              <p style={{ fontSize: "13px", fontWeight: 600, color: "var(--color-accent)" }}>
-                {shipment.status === "failed_delivery" ? "Delivery attempt failed" : shipment.status === "returned" ? "Shipment returned to sender" : "Shipment cancelled"}
-              </p>
-              <p style={{ fontSize: "12px", color: "#9a4020", marginTop: "2px" }}>
-                {latestEvent?.description ?? "Please contact us for assistance."}
-              </p>
-            </div>
-          </div>
-        )}
+        <StatusPill status={shipment.status} />
       </div>
 
+      {/* Route */}
+      <div className="p-6 gap-4 border-b border-[var(--color-border)] grid items-center grid-cols-[1fr_auto_1fr]">
+        <div>
+          <p className="mb-1.5 text-[11px] font-semibold tracking-[0.08em] uppercase text-[var(--color-ink-muted)]">From</p>
+          <p className="text-[15px] font-semibold text-[var(--color-ink)]">{shipment.sender_name}</p>
+          <p className="mt-0.5 text-[13px] text-[var(--color-ink-muted)]">{shipment.sender_address}</p>
+        </div>
+        <div className="text-center">
+          <svg width="48" height="16" fill="none" viewBox="0 0 48 16">
+            <path d="M0 8h44M38 2l6 6-6 6" stroke="#d0d0cc" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </div>
+        <div className="text-right">
+          <p className="mb-1.5 text-[11px] font-semibold tracking-[0.08em] uppercase text-[var(--color-ink-muted)]">To</p>
+          <p className="text-[15px] font-semibold text-[var(--color-ink)]">{shipment.receiver_name}</p>
+          <p className="mt-0.5 text-[13px] text-[var(--color-ink-muted)]">{shipment.receiver_address}</p>
+        </div>
+      </div>
+
+      {/* Est. delivery */}
+      {shipment.estimated_delivery && !isException && (
+        <div className="py-4 px-6 gap-2.5 border-b border-[var(--color-border)] flex items-center">
+          <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
+            <rect x="3" y="4" width="18" height="18" rx="2" stroke="#b0b0a8" strokeWidth="1.5"/>
+            <path d="M16 2v4M8 2v4M3 10h18" stroke="#b0b0a8" strokeWidth="1.5" strokeLinecap="round"/>
+          </svg>
+          <span className="text-[13px] text-[var(--color-ink-muted)]">
+            Estimated delivery: <strong className="text-[var(--color-ink)]">{formatDateShort(shipment.estimated_delivery)}</strong>
+          </span>
+        </div>
+      )}
+
+      {/* Progress pipeline */}
+      {!isException && (
+        <div className="p-6 border-b border-[var(--color-border)]">
+          <div className="flex items-start relative">
+            {PIPELINE.map((step, i) => {
+              const done = currentRank >= i;
+              const active = currentRank === i;
+              const isLast = i === PIPELINE.length - 1;
+              const nodeActive = done && active && shipment.status !== "delivered";
+              return (
+                <div key={step.status} className="flex-1 flex flex-col items-center relative">
+                  {/* Connector line */}
+                  {!isLast && (
+                    <div className={`absolute top-4 left-1/2 w-full h-0.5 transition-colors duration-300 ${currentRank > i ? "bg-[var(--color-accent)]" : "bg-[#e8e8e4]"}`} />
+                  )}
+                  {/* Node */}
+                  <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center z-10 relative shrink-0 transition-all duration-300 ${
+                    done
+                      ? nodeActive
+                        ? "border-[var(--color-accent)] bg-[var(--color-accent)]"
+                        : "border-[#1a7a45] bg-[#1a7a45]"
+                      : "border-[#e0e0da] bg-white"
+                  }`}>
+                    {done ? (
+                      nodeActive ? (
+                        <div className="w-2 h-2 rounded-full bg-white" />
+                      ) : (
+                        <svg width="12" height="12" fill="none" viewBox="0 0 24 24">
+                          <path d="M5 13l4 4L19 7" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                      )
+                    ) : (
+                      <div className="w-1.5 h-1.5 rounded-full bg-[#d0d0cc]" />
+                    )}
+                  </div>
+                  {/* Label */}
+                  <p className={`mt-2 text-[10px] text-center tracking-[0.01em] leading-[1.3] max-w-[60px] ${
+                    done ? "font-semibold text-[var(--color-ink)]" : "font-normal text-[#b8b8b2]"
+                  }`}>
+                    {step.label}
+                  </p>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Exception banner */}
+      {isException && (
+        <div className="m-6 py-4 px-5 gap-2.5 bg-[#fff4f1] border border-[#fdd5c8] rounded-xl flex items-start">
+          <svg width="16" height="16" fill="none" viewBox="0 0 24 24" className="mt-px shrink-0">
+            <path d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" stroke="var(--color-accent)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+          <div>
+            <p className="text-[13px] font-semibold text-[var(--color-accent)]">
+              {shipment.status === "failed_delivery" ? "Delivery attempt failed" : shipment.status === "returned" ? "Shipment returned to sender" : "Shipment cancelled"}
+            </p>
+            <p className="mt-0.5 text-xs text-[#9a4020]">
+              {latestEvent?.description ?? "Please contact us for assistance."}
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* Timeline */}
-      <div style={{ background: "white", border: "1px solid var(--color-border)", borderRadius: "20px", padding: "28px" }}>
-        <p style={{ fontFamily: "var(--font-display)", fontSize: "15px", fontWeight: 700, color: "var(--color-ink)", marginBottom: "24px", letterSpacing: "-0.01em" }}>
+      <div className={`p-6 ${attachments.length > 0 ? "border-b border-[var(--color-border)]" : ""}`}>
+        <p className="mb-6 text-[15px] font-bold text-[var(--color-ink)] tracking-[-0.01em]">
           Shipment History
         </p>
         {events.length > 0 ? (
@@ -188,23 +157,23 @@ export function PublicTrackingResult({ shipment }: Props) {
             ))}
           </div>
         ) : (
-          <p style={{ fontSize: "14px", color: "var(--color-ink-muted)" }}>No updates yet.</p>
+          <p className="text-sm text-[var(--color-ink-muted)]">No updates yet.</p>
         )}
       </div>
 
       {/* Proof images (if any, and if delivered) */}
       {attachments.length > 0 && (
-        <div style={{ background: "white", border: "1px solid var(--color-border)", borderRadius: "20px", padding: "28px" }}>
-          <p style={{ fontFamily: "var(--font-display)", fontSize: "15px", fontWeight: 700, color: "var(--color-ink)", marginBottom: "20px", letterSpacing: "-0.01em" }}>
+        <div className="p-6">
+          <p className="mb-5 text-[15px] font-bold text-[var(--color-ink)] tracking-[-0.01em]">
             Delivery Confirmation
           </p>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(120px, 1fr))", gap: "10px" }}>
+          <div className="gap-2.5 grid grid-cols-[repeat(auto-fit,minmax(120px,160px))]">
             {attachments
               .filter((a) => a.file_type?.startsWith("image/"))
               .map((att) => (
-                <a key={att.id} href={att.file_url} target="_blank" rel="noopener noreferrer" style={{ display: "block" }}>
-                  <div style={{ aspectRatio: "1", borderRadius: "10px", overflow: "hidden", background: "#f5f5f3", border: "1px solid var(--color-border)" }}>
-                    <img src={att.file_url} alt={att.file_name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                <a key={att.id} href={att.file_url} target="_blank" rel="noopener noreferrer" className="block">
+                  <div className="aspect-square rounded-[10px] overflow-hidden bg-[#f5f5f3] border border-[var(--color-border)]">
+                    <img src={att.file_url} alt={att.file_name} className="w-full h-full object-cover" />
                   </div>
                 </a>
               ))}
@@ -217,44 +186,25 @@ export function PublicTrackingResult({ shipment }: Props) {
 
 function TimelineRow({ event, isFirst, isLast }: { event: TrackingEvent; isFirst: boolean; isLast: boolean }) {
   return (
-    <div style={{ display: "flex", gap: "16px", paddingBottom: isLast ? "0" : "20px", position: "relative" }}>
+    <div className={`gap-4 flex relative ${isLast ? "pb-0" : "pb-5"}`}>
       {/* Spine */}
       {!isLast && (
-        <div style={{
-          position: "absolute",
-          left: "11px",
-          top: "24px",
-          bottom: 0,
-          width: "1px",
-          background: isFirst ? "#e8e8e4" : "#f0f0ec",
-        }} />
+        <div className={`absolute left-[11px] top-6 bottom-0 w-px ${isFirst ? "bg-[#e8e8e4]" : "bg-[#f0f0ec]"}`} />
       )}
       {/* Dot */}
-      <div style={{
-        width: "23px", height: "23px",
-        borderRadius: "50%",
-        background: isFirst ? "var(--color-ink)" : "#f0f0ec",
-        border: `2px solid ${isFirst ? "var(--color-ink)" : "#e0e0da"}`,
-        flexShrink: 0,
-        marginTop: "1px",
-        display: "flex", alignItems: "center", justifyContent: "center",
-        zIndex: 1,
-      }}>
-        {isFirst && <div style={{ width: "6px", height: "6px", borderRadius: "50%", background: "white" }} />}
+      <div className={`mt-px w-[23px] h-[23px] rounded-full shrink-0 border-2 flex items-center justify-center z-10 ${
+        isFirst ? "bg-[var(--color-ink)] border-[var(--color-ink)]" : "bg-[#f0f0ec] border-[#e0e0da]"
+      }`}>
+        {isFirst && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
       </div>
       {/* Content */}
-      <div style={{ flex: 1, paddingTop: "2px" }}>
-        <div style={{ display: "flex", alignItems: "baseline", gap: "8px", flexWrap: "wrap" }}>
-          <p style={{
-            fontSize: "14px",
-            fontWeight: isFirst ? 600 : 400,
-            color: isFirst ? "var(--color-ink)" : "#9a9a94",
-            fontFamily: isFirst ? "var(--font-display)" : "var(--font-body)",
-          }}>
+      <div className="pt-0.5 flex-1">
+        <div className="gap-2 flex items-baseline flex-wrap">
+          <p className={`text-sm ${isFirst ? "font-semibold text-[var(--color-ink)]" : "font-normal text-[#9a9a94]"}`}>
             {event.description ?? event.status.replace(/_/g, " ")}
           </p>
           {event.location && (
-            <span style={{ fontSize: "12px", color: "#b0b0a8", display: "flex", alignItems: "center", gap: "3px" }}>
+            <span className="gap-[3px] text-xs text-[#b0b0a8] flex items-center">
               <svg width="10" height="10" fill="none" viewBox="0 0 24 24">
                 <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" fill="currentColor"/>
               </svg>
@@ -262,33 +212,29 @@ function TimelineRow({ event, isFirst, isLast }: { event: TrackingEvent; isFirst
             </span>
           )}
         </div>
-        <p style={{ fontSize: "11px", color: "#c0c0b8", marginTop: "3px" }}>{formatDate(event.created_at)}</p>
+        <p className="mt-[3px] text-[11px] text-[#c0c0b8]">{formatDate(event.created_at)}</p>
       </div>
     </div>
   );
 }
 
+const STATUS_PILL: Record<string, { bg: string; text: string; dot: string; label: string }> = {
+  pending:          { bg: "bg-[#f5f5f3]", text: "text-[#6b6b6b]", dot: "bg-[#6b6b6b]", label: "Pending" },
+  picked_up:        { bg: "bg-[#eff6ff]", text: "text-[#1d4ed8]", dot: "bg-[#1d4ed8]", label: "Picked Up" },
+  in_transit:       { bg: "bg-[#f0f0ff]", text: "text-[#4338ca]", dot: "bg-[#4338ca]", label: "In Transit" },
+  out_for_delivery: { bg: "bg-[#fdf4ff]", text: "text-[#7e22ce]", dot: "bg-[#7e22ce]", label: "Out for Delivery" },
+  delivered:        { bg: "bg-[var(--color-success-light)]", text: "text-[var(--color-success)]", dot: "bg-[var(--color-success)]", label: "Delivered" },
+  failed_delivery:  { bg: "bg-[#fff4f1]", text: "text-[var(--color-accent)]", dot: "bg-[var(--color-accent)]", label: "Delivery Failed" },
+  returned:         { bg: "bg-[#fff7ed]", text: "text-[#c2410c]", dot: "bg-[#c2410c]", label: "Returned" },
+  cancelled:        { bg: "bg-[#f5f5f3]", text: "text-[#6b6b6b]", dot: "bg-[#6b6b6b]", label: "Cancelled" },
+};
+
 function StatusPill({ status }: { status: ShipmentStatus }) {
-  const configs: Record<string, { bg: string; color: string; label: string }> = {
-    pending:          { bg: "#f5f5f3", color: "#6b6b6b",               label: "Pending" },
-    picked_up:        { bg: "#eff6ff", color: "#1d4ed8",               label: "Picked Up" },
-    in_transit:       { bg: "#f0f0ff", color: "#4338ca",               label: "In Transit" },
-    out_for_delivery: { bg: "#fdf4ff", color: "#7e22ce",               label: "Out for Delivery" },
-    delivered:        { bg: "var(--color-success-light)", color: "var(--color-success)", label: "Delivered" },
-    failed_delivery:  { bg: "#fff4f1", color: "var(--color-accent)",   label: "Delivery Failed" },
-    returned:         { bg: "#fff7ed", color: "#c2410c",               label: "Returned" },
-    cancelled:        { bg: "#f5f5f3", color: "#6b6b6b",               label: "Cancelled" },
-  };
-  const c = configs[status] ?? configs.pending;
+  const c = STATUS_PILL[status] ?? STATUS_PILL.pending;
   return (
-    <div style={{
-      display: "inline-flex", alignItems: "center", gap: "6px",
-      padding: "6px 14px",
-      background: c.bg,
-      borderRadius: "100px",
-    }}>
-      <div style={{ width: "6px", height: "6px", borderRadius: "50%", background: c.color }} />
-      <span style={{ fontSize: "12px", fontWeight: 600, color: c.color, fontFamily: "var(--font-display)", letterSpacing: "0.01em" }}>
+    <div className={`gap-1.5 py-1.5 px-3.5 inline-flex items-center rounded-full shrink-0 whitespace-nowrap ${c.bg}`}>
+      <div className={`w-1.5 h-1.5 rounded-full ${c.dot}`} />
+      <span className={`text-xs font-semibold tracking-[0.01em] ${c.text}`}>
         {c.label}
       </span>
     </div>

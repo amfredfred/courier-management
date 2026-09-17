@@ -10,15 +10,15 @@ import { notFound } from "next/navigation";
 
 interface PageProps { params: Promise<{ id: string }> }
 
-const STATUS_STYLE: Record<string, { bg: string; color: string; label: string }> = {
-  pending:          { bg: "#f5f5f3", color: "#6b6b6b",  label: "Pending" },
-  picked_up:        { bg: "#eff6ff", color: "#1d4ed8",  label: "Picked Up" },
-  in_transit:       { bg: "#f0f0ff", color: "#4338ca",  label: "In Transit" },
-  out_for_delivery: { bg: "#fdf4ff", color: "#7e22ce",  label: "Out for Delivery" },
-  delivered:        { bg: "#f0faf4", color: "#16a34a",  label: "Delivered" },
-  failed_delivery:  { bg: "#fff4f1", color: "#c8410a",  label: "Delivery Failed" },
-  returned:         { bg: "#fff7ed", color: "#c2410c",  label: "Returned" },
-  cancelled:        { bg: "#f5f5f3", color: "#6b6b6b",  label: "Cancelled" },
+const STATUS_STYLE: Record<string, { bg: string; dot: string; text: string; label: string }> = {
+  pending:          { bg: "bg-[#f5f5f3]", dot: "bg-[#6b6b6b]", text: "text-[#6b6b6b]", label: "Pending" },
+  picked_up:        { bg: "bg-[#eff6ff]", dot: "bg-[#1d4ed8]", text: "text-[#1d4ed8]", label: "Picked Up" },
+  in_transit:       { bg: "bg-[#f0f0ff]", dot: "bg-[#4338ca]", text: "text-[#4338ca]", label: "In Transit" },
+  out_for_delivery: { bg: "bg-[#fdf4ff]", dot: "bg-[#7e22ce]", text: "text-[#7e22ce]", label: "Out for Delivery" },
+  delivered:        { bg: "bg-[#f0faf4]", dot: "bg-[#16a34a]", text: "text-[#16a34a]", label: "Delivered" },
+  failed_delivery:  { bg: "bg-[#fff4f1]", dot: "bg-[#c8410a]", text: "text-[#c8410a]", label: "Delivery Failed" },
+  returned:         { bg: "bg-[#fff7ed]", dot: "bg-[#c2410c]", text: "text-[#c2410c]", label: "Returned" },
+  cancelled:        { bg: "bg-[#f5f5f3]", dot: "bg-[#6b6b6b]", text: "text-[#6b6b6b]", label: "Cancelled" },
 };
 
 export default async function ShipmentDetailPage({ params }: PageProps) {
@@ -30,48 +30,41 @@ export default async function ShipmentDetailPage({ params }: PageProps) {
   const st = STATUS_STYLE[shipment.status] ?? STATUS_STYLE.pending;
 
   return (
-    <div style={{ padding: "36px 40px", fontFamily: "var(--font-body)", maxWidth: "1100px" }}>
+    <div className="p-10 max-w-[1100px]">
       {/* Back */}
-      <Link href="/dashboard/shipments" style={{
-        display: "inline-flex", alignItems: "center", gap: "6px",
-        fontSize: "12px", color: "var(--color-ink-muted)", textDecoration: "none",
-        marginBottom: "24px", fontWeight: 500,
-      }}>
+      <Link href="/dashboard/shipments" className="inline-flex items-center gap-1.5 text-xs text-[var(--color-ink-muted)] no-underline mb-6 font-medium">
         <ArrowLeft size={13} /> Back to shipments
       </Link>
 
       {/* Header */}
-      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "16px", marginBottom: "28px", flexWrap: "wrap" }}>
+      <div className="flex items-start justify-between gap-4 mb-8 flex-wrap">
         <div>
-          <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "6px", flexWrap: "wrap" }}>
-            <h1 style={{ fontFamily: "monospace", fontSize: "20px", fontWeight: 700, color: "var(--color-ink)", letterSpacing: "0.04em" }}>
+          <div className="flex items-center gap-3 mb-1.5 flex-wrap">
+            <h1 className="font-mono text-xl font-bold text-[var(--color-ink)] tracking-[0.04em]">
               {shipment.tracking_id}
             </h1>
-            <span style={{ display: "inline-flex", alignItems: "center", gap: "5px", padding: "4px 10px", background: st.bg, borderRadius: "100px" }}>
-              <div style={{ width: "5px", height: "5px", borderRadius: "50%", background: st.color }} />
-              <span style={{ fontSize: "11px", fontWeight: 600, color: st.color, fontFamily: "var(--font-display)", letterSpacing: "0.02em" }}>{st.label}</span>
+            <span className={`inline-flex items-center gap-[5px] py-1 px-2.5 rounded-full ${st.bg}`}>
+              <div className={`w-[5px] h-[5px] rounded-full ${st.dot}`} />
+              <span className={`text-[11px] font-semibold tracking-[0.02em] ${st.text}`}>{st.label}</span>
             </span>
           </div>
-          <p style={{ fontSize: "12px", color: "#b8b8b2" }}>Created {formatDate(shipment.created_at)}</p>
+          <p className="text-xs text-[#b8b8b2]">Created {formatDate(shipment.created_at)}</p>
         </div>
-        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+        <div className="flex items-center gap-2">
           <StatusUpdateClient shipmentId={shipment.id} currentStatus={shipment.status} />
-          <Link href={`/dashboard/shipments/${shipment.id}/edit`} style={{
-            display: "inline-flex", alignItems: "center", gap: "6px",
-            padding: "8px 14px",
-            border: "1px solid var(--color-border)", borderRadius: "9px",
-            fontSize: "12px", fontWeight: 600, color: "var(--color-ink)",
-            textDecoration: "none", fontFamily: "var(--font-body)",
-          }}>
+          <Link
+            href={`/dashboard/shipments/${shipment.id}/edit`}
+            className="inline-flex items-center gap-1.5 py-2 px-3.5 border border-[var(--color-border)] rounded-[9px] text-xs font-semibold text-[var(--color-ink)] no-underline"
+          >
             <Edit size={12} /> Edit
           </Link>
           <DeleteButton shipmentId={shipment.id} />
         </div>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 340px", gap: "16px" }}>
+      <div className="grid gap-4 grid-cols-[1fr_340px]">
         {/* Main col */}
-        <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+        <div className="flex flex-col gap-3.5">
           {/* Route card */}
           <Card>
             <Row>
@@ -79,26 +72,26 @@ export default async function ShipmentDetailPage({ params }: PageProps) {
                 <strong>{shipment.sender_name}</strong>
                 <Muted>{shipment.sender_email}</Muted>
                 {shipment.sender_phone && <Muted>{shipment.sender_phone}</Muted>}
-                <Muted style={{ marginTop: "6px" }}>{shipment.sender_address}</Muted>
+                <Muted className="mt-1.5">{shipment.sender_address}</Muted>
               </Half>
-              <div style={{ width: "1px", background: "var(--color-border)", alignSelf: "stretch" }} />
+              <div className="w-px bg-[var(--color-border)] self-stretch" />
               <Half label="Receiver">
                 <strong>{shipment.receiver_name}</strong>
                 <Muted>{shipment.receiver_email}</Muted>
                 {shipment.receiver_phone && <Muted>{shipment.receiver_phone}</Muted>}
-                <Muted style={{ marginTop: "6px" }}>{shipment.receiver_address}</Muted>
+                <Muted className="mt-1.5">{shipment.receiver_address}</Muted>
               </Half>
             </Row>
           </Card>
 
           {/* Package details */}
           <Card title="Package">
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "16px" }}>
+            <div className="grid grid-cols-3 gap-4">
               <Detail label="Weight" value={shipment.weight ? `${shipment.weight} kg` : "—"} />
               <Detail label="Dimensions" value={shipment.dimensions ?? "—"} />
               <Detail label="Est. Delivery" value={shipment.estimated_delivery ? formatDateShort(shipment.estimated_delivery) : "—"} />
-              {shipment.description && <Detail label="Contents" value={shipment.description} style={{ gridColumn: "span 3" }} />}
-              {shipment.notes && <Detail label="Notes" value={shipment.notes} style={{ gridColumn: "span 3" }} />}
+              {shipment.description && <Detail label="Contents" value={shipment.description} className="col-span-3" />}
+              {shipment.notes && <Detail label="Notes" value={shipment.notes} className="col-span-3" />}
             </div>
           </Card>
 
@@ -109,18 +102,16 @@ export default async function ShipmentDetailPage({ params }: PageProps) {
         </div>
 
         {/* Sidebar col */}
-        <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+        <div className="flex flex-col gap-3.5">
           {/* Public link */}
-          <div style={{ background: "#fff8f5", border: "1px solid #fde0d0", borderRadius: "14px", padding: "16px 18px" }}>
-            <p style={{ fontSize: "11px", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--color-accent)", marginBottom: "8px" }}>
+          <div className="bg-[#fff8f5] border border-[#fde0d0] rounded-2xl py-5 px-6">
+            <p className="text-[11px] font-bold tracking-[0.08em] uppercase text-[var(--color-accent)] mb-2">
               Customer Tracking Link
             </p>
-            <p style={{ fontFamily: "monospace", fontSize: "11px", color: "#9a4020", wordBreak: "break-all", marginBottom: "10px" }}>
+            <p className="font-mono text-[11px] text-[#9a4020] break-all mb-2.5">
               /?track={shipment.tracking_id}
             </p>
-            <Link href={`/?track=${shipment.tracking_id}`} target="_blank" style={{
-              fontSize: "12px", color: "var(--color-accent)", fontWeight: 600, textDecoration: "none",
-            }}>
+            <Link href={`/?track=${shipment.tracking_id}`} target="_blank" className="text-xs text-[var(--color-accent)] font-semibold no-underline">
               Open tracking page →
             </Link>
           </div>
@@ -130,7 +121,7 @@ export default async function ShipmentDetailPage({ params }: PageProps) {
             {(shipment.tracking_events?.length ?? 0) > 0 ? (
               <TrackingTimeline events={shipment.tracking_events!} currentStatus={shipment.status} />
             ) : (
-              <p style={{ fontSize: "13px", color: "var(--color-ink-muted)" }}>No events yet.</p>
+              <p className="text-[13px] text-[var(--color-ink-muted)]">No events yet.</p>
             )}
           </Card>
         </div>
@@ -141,35 +132,35 @@ export default async function ShipmentDetailPage({ params }: PageProps) {
 
 function Card({ children, title }: { children: React.ReactNode; title?: string }) {
   return (
-    <div style={{ background: "white", border: "1px solid var(--color-border)", borderRadius: "14px", padding: "20px" }}>
-      {title && <p style={{ fontFamily: "var(--font-display)", fontSize: "13px", fontWeight: 700, color: "var(--color-ink)", marginBottom: "16px", letterSpacing: "-0.01em" }}>{title}</p>}
+    <div className="bg-white border border-[var(--color-border)] rounded-2xl p-6">
+      {title && <p className="font-bold text-[13px] text-[var(--color-ink)] mb-4 tracking-[-0.01em]">{title}</p>}
       {children}
     </div>
   );
 }
 
 function Row({ children }: { children: React.ReactNode }) {
-  return <div style={{ display: "flex", gap: "20px" }}>{children}</div>;
+  return <div className="flex gap-5">{children}</div>;
 }
 
 function Half({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <div style={{ flex: 1 }}>
-      <p style={{ fontSize: "10px", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--color-ink-muted)", marginBottom: "10px" }}>{label}</p>
-      <div style={{ display: "flex", flexDirection: "column", gap: "2px", fontSize: "13px", color: "var(--color-ink)" }}>{children}</div>
+    <div className="flex-1">
+      <p className="text-[10px] font-bold tracking-[0.08em] uppercase text-[var(--color-ink-muted)] mb-2.5">{label}</p>
+      <div className="flex flex-col gap-0.5 text-[13px] text-[var(--color-ink)]">{children}</div>
     </div>
   );
 }
 
-function Muted({ children, style }: { children: React.ReactNode; style?: React.CSSProperties }) {
-  return <span style={{ color: "var(--color-ink-muted)", fontWeight: 300, ...style }}>{children}</span>;
+function Muted({ children, className = "" }: { children: React.ReactNode; className?: string }) {
+  return <span className={`text-[var(--color-ink-muted)] font-light ${className}`}>{children}</span>;
 }
 
-function Detail({ label, value, style }: { label: string; value: string; style?: React.CSSProperties }) {
+function Detail({ label, value, className = "" }: { label: string; value: string; className?: string }) {
   return (
-    <div style={style}>
-      <p style={{ fontSize: "10px", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--color-ink-muted)", marginBottom: "4px" }}>{label}</p>
-      <p style={{ fontSize: "13px", fontWeight: 500, color: "var(--color-ink)" }}>{value}</p>
+    <div className={className}>
+      <p className="text-[10px] font-bold tracking-[0.08em] uppercase text-[var(--color-ink-muted)] mb-1">{label}</p>
+      <p className="text-[13px] font-medium text-[var(--color-ink)]">{value}</p>
     </div>
   );
 }

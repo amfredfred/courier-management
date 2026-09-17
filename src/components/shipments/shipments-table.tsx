@@ -21,22 +21,12 @@ interface Props {
 }
 
 const STATUS_DOT: Record<string, string> = {
-  pending: "#9ca3af", picked_up: "#3b82f6", in_transit: "#6366f1",
-  out_for_delivery: "#8b5cf6", delivered: "#16a34a",
-  failed_delivery: "#dc2626", returned: "#ea580c", cancelled: "#9ca3af",
+  pending: "bg-[#9ca3af]", picked_up: "bg-[#3b82f6]", in_transit: "bg-[#6366f1]",
+  out_for_delivery: "bg-[#8b5cf6]", delivered: "bg-[#16a34a]",
+  failed_delivery: "bg-[#dc2626]", returned: "bg-[#ea580c]", cancelled: "bg-[#9ca3af]",
 };
 
-const inputStyle: React.CSSProperties = {
-  padding: "9px 12px 9px 36px",
-  border: "1.5px solid var(--color-border)",
-  borderRadius: "9px",
-  fontSize: "13px",
-  fontFamily: "var(--font-body)",
-  color: "var(--color-ink)",
-  background: "white",
-  outline: "none",
-  width: "100%",
-};
+const selectClass = "py-2.5 px-3 border-[1.5px] border-[var(--color-border)] rounded-[9px] text-[13px] text-[var(--color-ink)] bg-white outline-none cursor-pointer";
 
 export function ShipmentsTable({ shipments, total, page, totalPages, currentStatus = "", currentSearch = "" }: Props) {
   const router = useRouter();
@@ -72,21 +62,21 @@ export function ShipmentsTable({ shipments, total, page, totalPages, currentStat
   return (
     <>
       {/* Toolbar */}
-      <div style={{ display: "flex", gap: "10px", marginBottom: "16px", alignItems: "center" }}>
-        <div style={{ position: "relative", flex: 1 }}>
-          <Search size={14} style={{ position: "absolute", left: "11px", top: "50%", transform: "translateY(-50%)", color: "#b8b8b2", pointerEvents: "none" }} />
+      <div className="flex gap-2.5 mb-4 items-center">
+        <div className="relative flex-1">
+          <Search size={14} className="absolute left-[11px] top-1/2 -translate-y-1/2 text-[#b8b8b2] pointer-events-none" />
           <input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search tracking ID, name, email…"
-            style={inputStyle}
+            className="py-2.5 pr-3 pl-9 border-[1.5px] border-[var(--color-border)] rounded-[9px] text-[13px] text-[var(--color-ink)] bg-white outline-none w-full"
           />
         </div>
 
         <select
           value={status}
           onChange={(e) => setStatus(e.target.value)}
-          style={{ padding: "9px 12px", border: "1.5px solid var(--color-border)", borderRadius: "9px", fontSize: "13px", fontFamily: "var(--font-body)", color: "var(--color-ink)", background: "white", outline: "none", cursor: "pointer" }}
+          className={selectClass}
         >
           <option value="">All statuses</option>
           {Object.entries(STATUS_LABELS).map(([v, l]) => <option key={v} value={v}>{l}</option>)}
@@ -95,7 +85,7 @@ export function ShipmentsTable({ shipments, total, page, totalPages, currentStat
         {hasFilters && (
           <button
             onClick={() => { setSearch(""); setStatus(""); }}
-            style={{ padding: "9px 12px", border: "1.5px solid var(--color-border)", borderRadius: "9px", fontSize: "12px", fontWeight: 600, color: "var(--color-ink-muted)", background: "white", cursor: "pointer", display: "flex", alignItems: "center", gap: "5px", fontFamily: "var(--font-body)", whiteSpace: "nowrap" }}
+            className="py-2.5 px-3 border-[1.5px] border-[var(--color-border)] rounded-[9px] text-xs font-semibold text-[var(--color-ink-muted)] bg-white cursor-pointer flex items-center gap-[5px] whitespace-nowrap"
           >
             <X size={12} /> Clear
           </button>
@@ -103,43 +93,41 @@ export function ShipmentsTable({ shipments, total, page, totalPages, currentStat
 
         <a
           href={`/api/export${hasFilters ? `?${new URLSearchParams({ ...(search ? { search } : {}), ...(status ? { status } : {}) })}` : ""}`}
-          style={{ padding: "9px 14px", border: "1.5px solid var(--color-border)", borderRadius: "9px", fontSize: "12px", fontWeight: 600, color: "var(--color-ink-muted)", background: "white", textDecoration: "none", display: "flex", alignItems: "center", gap: "6px", whiteSpace: "nowrap", fontFamily: "var(--font-body)" }}
+          className="py-2.5 px-3.5 border-[1.5px] border-[var(--color-border)] rounded-[9px] text-xs font-semibold text-[var(--color-ink-muted)] bg-white no-underline flex items-center gap-1.5 whitespace-nowrap"
         >
           <Download size={13} /> Export CSV
         </a>
       </div>
 
       {/* Table */}
-      <div style={{ background: "white", border: "1px solid var(--color-border)", borderRadius: "16px", overflow: "hidden" }}>
+      <div className="bg-white border border-[var(--color-border)] rounded-2xl overflow-hidden">
         {shipments.length === 0 ? (
-          <div style={{ padding: "64px 24px", textAlign: "center" }}>
-            <div style={{ width: "48px", height: "48px", borderRadius: "12px", background: "var(--color-surface)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px" }}>
+          <div className="py-16 px-6 text-center">
+            <div className="w-12 h-12 rounded-xl bg-[var(--color-surface)] flex items-center justify-center mx-auto mb-4">
               <Package size={22} color="#b8b8b2" strokeWidth={1.5} />
             </div>
-            <p style={{ fontFamily: "var(--font-display)", fontSize: "15px", fontWeight: 700, color: "var(--color-ink)", marginBottom: "6px" }}>
+            <p className="font-bold text-[15px] text-[var(--color-ink)] mb-1.5">
               {hasFilters ? "No results" : "No shipments yet"}
             </p>
-            <p style={{ fontSize: "13px", color: "var(--color-ink-muted)", marginBottom: "20px", fontWeight: 300 }}>
+            <p className="text-[13px] text-[var(--color-ink-muted)] mb-5 font-light">
               {hasFilters ? "Try different filters." : "Create your first shipment to get started."}
             </p>
             {!hasFilters && (
-              <Link href="/dashboard/shipments/new" style={{
-                display: "inline-flex", alignItems: "center", gap: "6px",
-                padding: "9px 18px", background: "var(--color-ink)", color: "white",
-                borderRadius: "9px", textDecoration: "none",
-                fontSize: "13px", fontWeight: 600, fontFamily: "var(--font-display)",
-              }}>
+              <Link
+                href="/dashboard/shipments/new"
+                className="inline-flex items-center gap-1.5 py-2 px-[18px] bg-[var(--color-ink)] text-white rounded-[9px] no-underline text-[13px] font-semibold"
+              >
                 <Plus size={13} /> Create shipment
               </Link>
             )}
           </div>
         ) : (
           <>
-            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "13px" }}>
+            <table className="w-full border-collapse text-[13px]">
               <thead>
-                <tr style={{ borderBottom: "1px solid var(--color-surface)" }}>
+                <tr className="border-b border-[var(--color-surface)]">
                   {["Tracking ID", "Receiver", "Status", "Est. Delivery", "Created", ""].map((h) => (
-                    <th key={h} style={{ textAlign: "left", padding: "12px 20px", fontSize: "10px", fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--color-ink-muted)", whiteSpace: "nowrap", fontFamily: "var(--font-body)" }}>
+                    <th key={h} className="text-left py-3 px-6 text-[10px] font-bold tracking-[0.08em] uppercase text-[var(--color-ink-muted)] whitespace-nowrap">
                       {h}
                     </th>
                   ))}
@@ -147,45 +135,44 @@ export function ShipmentsTable({ shipments, total, page, totalPages, currentStat
               </thead>
               <tbody>
                 {shipments.map((s, i) => {
-                  const dot = STATUS_DOT[s.status] ?? "#9ca3af";
+                  const dot = STATUS_DOT[s.status] ?? "bg-[#9ca3af]";
                   return (
                     <tr
                       key={s.id}
-                      style={{ borderBottom: i < shipments.length - 1 ? "1px solid #fafaf8" : "none", transition: "background 0.1s" }}
-                      className="hover:bg-gray-50"
+                      className={`transition-colors duration-100 hover:bg-gray-50 ${i < shipments.length - 1 ? "border-b border-[#fafaf8]" : "border-b-0"}`}
                     >
-                      <td style={{ padding: "14px 20px" }}>
-                        <span style={{ fontFamily: "monospace", fontSize: "12px", fontWeight: 700, color: "var(--color-ink)", background: "var(--color-surface)", padding: "3px 8px", borderRadius: "5px", letterSpacing: "0.04em" }}>
+                      <td className="py-4 px-6">
+                        <span className="font-mono text-xs font-bold text-[var(--color-ink)] bg-[var(--color-surface)] py-[3px] px-2 rounded-[5px] tracking-[0.04em]">
                           {s.tracking_id}
                         </span>
                       </td>
-                      <td style={{ padding: "14px 20px" }}>
-                        <p style={{ fontWeight: 500, color: "var(--color-ink)", maxWidth: "180px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{s.receiver_name}</p>
-                        <p style={{ fontSize: "11px", color: "#b8b8b2", marginTop: "1px", maxWidth: "180px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{s.receiver_email}</p>
+                      <td className="py-4 px-6">
+                        <p className="font-medium text-[var(--color-ink)] max-w-[180px] overflow-hidden text-ellipsis whitespace-nowrap">{s.receiver_name}</p>
+                        <p className="text-[11px] text-[#b8b8b2] mt-px max-w-[180px] overflow-hidden text-ellipsis whitespace-nowrap">{s.receiver_email}</p>
                       </td>
-                      <td style={{ padding: "14px 20px" }}>
-                        <div style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}>
-                          <div style={{ width: "6px", height: "6px", borderRadius: "50%", background: dot, flexShrink: 0 }} />
-                          <span style={{ color: "var(--color-ink-muted)", fontWeight: 500, whiteSpace: "nowrap" }}>{STATUS_LABELS[s.status]}</span>
+                      <td className="py-4 px-6">
+                        <div className="inline-flex items-center gap-1.5">
+                          <div className={`w-1.5 h-1.5 rounded-full shrink-0 ${dot}`} />
+                          <span className="text-[var(--color-ink-muted)] font-medium whitespace-nowrap">{STATUS_LABELS[s.status]}</span>
                         </div>
                       </td>
-                      <td style={{ padding: "14px 20px", color: "#b8b8b2", whiteSpace: "nowrap" }}>
+                      <td className="py-4 px-6 text-[#b8b8b2] whitespace-nowrap">
                         {s.estimated_delivery ?? "—"}
                       </td>
-                      <td style={{ padding: "14px 20px", color: "#b8b8b2", whiteSpace: "nowrap" }}>
+                      <td className="py-4 px-6 text-[#b8b8b2] whitespace-nowrap">
                         {formatDate(s.created_at)}
                       </td>
-                      <td style={{ padding: "14px 20px" }}>
-                        <div style={{ display: "flex", alignItems: "center", gap: "12px", justifyContent: "flex-end" }}>
+                      <td className="py-4 px-6">
+                        <div className="flex items-center gap-3 justify-end">
                           <Link
                             href={`/dashboard/shipments/${s.id}`}
-                            style={{ fontSize: "12px", fontWeight: 600, color: "var(--color-ink)", textDecoration: "none", whiteSpace: "nowrap" }}
+                            className="text-xs font-semibold text-[var(--color-ink)] no-underline whitespace-nowrap"
                           >
                             View →
                           </Link>
                           <button
                             onClick={() => setDeleteTarget(s.id)}
-                            style={{ background: "none", border: "none", cursor: "pointer", color: "#d0d0c8", padding: "2px", display: "flex", alignItems: "center", transition: "color 0.15s" }}
+                            className="bg-transparent border-none cursor-pointer text-[#d0d0c8] p-0.5 flex items-center transition-colors duration-150"
                             title="Delete"
                           >
                             <Trash2 size={13} />
@@ -200,25 +187,20 @@ export function ShipmentsTable({ shipments, total, page, totalPages, currentStat
 
             {/* Pagination */}
             {totalPages > 1 && (
-              <div style={{ padding: "14px 20px", borderTop: "1px solid var(--color-surface)", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                <p style={{ fontSize: "12px", color: "#b8b8b2" }}>
+              <div className="py-4 px-6 border-t border-[var(--color-surface)] flex items-center justify-between">
+                <p className="text-xs text-[#b8b8b2]">
                   {shipments.length} of {total} shipments
                 </p>
-                <div style={{ display: "flex", gap: "4px" }}>
+                <div className="flex gap-1">
                   {Array.from({ length: Math.min(totalPages, 7) }, (_, i) => i + 1).map((p) => (
                     <button
                       key={p}
                       onClick={() => pushQuery(search, status, p)}
-                      style={{
-                        width: "30px", height: "30px", borderRadius: "7px",
-                        border: "1.5px solid",
-                        borderColor: p === page ? "var(--color-ink)" : "transparent",
-                        background: p === page ? "var(--color-ink)" : "transparent",
-                        color: p === page ? "white" : "var(--color-ink-muted)",
-                        fontSize: "12px", fontWeight: p === page ? 700 : 400,
-                        cursor: "pointer", fontFamily: "var(--font-body)",
-                        transition: "all 0.15s",
-                      }}
+                      className={`w-[30px] h-[30px] rounded-[7px] border-[1.5px] text-xs cursor-pointer transition-all duration-150 ${
+                        p === page
+                          ? "border-[var(--color-ink)] bg-[var(--color-ink)] text-white font-bold"
+                          : "border-transparent bg-transparent text-[var(--color-ink-muted)] font-normal"
+                      }`}
                     >
                       {p}
                     </button>
@@ -232,24 +214,24 @@ export function ShipmentsTable({ shipments, total, page, totalPages, currentStat
 
       {/* Delete confirm */}
       {deleteTarget && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.4)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 50, padding: "16px" }}>
-          <div style={{ background: "white", borderRadius: "18px", width: "100%", maxWidth: "360px", padding: "28px", fontFamily: "var(--font-body)", boxShadow: "0 24px 48px rgba(0,0,0,0.12)" }}>
-            <div style={{ display: "flex", gap: "14px", alignItems: "flex-start", marginBottom: "24px" }}>
-              <div style={{ width: "40px", height: "40px", borderRadius: "50%", background: "#fff4f1", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-[18px] w-full max-w-[360px] p-7 shadow-[0_24px_48px_rgba(0,0,0,0.12)]">
+            <div className="flex gap-3.5 items-start mb-6">
+              <div className="w-10 h-10 rounded-full bg-[#fff4f1] flex items-center justify-center shrink-0">
                 <AlertTriangle size={18} color="var(--color-accent)" />
               </div>
               <div>
-                <p style={{ fontFamily: "var(--font-display)", fontSize: "15px", fontWeight: 700, color: "var(--color-ink)", marginBottom: "6px" }}>Delete shipment?</p>
-                <p style={{ fontSize: "13px", color: "var(--color-ink-muted)", fontWeight: 300, lineHeight: 1.5 }}>
+                <p className="font-bold text-[15px] text-[var(--color-ink)] mb-1.5">Delete shipment?</p>
+                <p className="text-[13px] text-[var(--color-ink-muted)] font-light leading-normal">
                   All tracking history will be permanently removed.
                 </p>
               </div>
             </div>
-            <div style={{ display: "flex", gap: "10px" }}>
-              <button onClick={handleDelete} disabled={isPending} style={{ flex: 1, padding: "11px", background: "var(--color-accent)", color: "white", border: "none", borderRadius: "9px", fontSize: "13px", fontWeight: 700, fontFamily: "var(--font-display)", cursor: isPending ? "not-allowed" : "pointer", opacity: isPending ? 0.6 : 1 }}>
+            <div className="flex gap-2.5">
+              <button onClick={handleDelete} disabled={isPending} className="flex-1 py-[11px] bg-[var(--color-accent)] text-white border-none rounded-[9px] text-[13px] font-bold cursor-pointer disabled:cursor-not-allowed disabled:opacity-60">
                 {isPending ? "Deleting…" : "Delete"}
               </button>
-              <button onClick={() => setDeleteTarget(null)} style={{ flex: 1, padding: "11px", background: "white", color: "var(--color-ink)", border: "1.5px solid var(--color-border)", borderRadius: "9px", fontSize: "13px", fontWeight: 600, cursor: "pointer", fontFamily: "var(--font-body)" }}>
+              <button onClick={() => setDeleteTarget(null)} className="flex-1 py-[11px] bg-white text-[var(--color-ink)] border-[1.5px] border-[var(--color-border)] rounded-[9px] text-[13px] font-semibold cursor-pointer">
                 Cancel
               </button>
             </div>

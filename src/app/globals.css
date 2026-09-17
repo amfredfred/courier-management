@@ -1,10 +1,23 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@theme {
+  --font-sans: var(--font-geist-sans), system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), monospace;
+  --color-brand-50: #fff8e7;
+  --color-brand-100: #ffedb8;
+  --color-brand-200: #ffe08a;
+  --color-brand-300: #ffd35b;
+  --color-brand-400: #ffc52d;
+  --color-brand-500: #f5a800;
+  --color-brand-600: #c27f00;
+  --color-brand-700: #8f5a00;
+  --color-brand-800: #5c3800;
+  --color-brand-900: #2a1800;
+}
 
 :root {
-  --font-display: 'Syne', sans-serif;
-  --font-body: 'DM Sans', sans-serif;
+  --font-display: var(--font-geist-sans), sans-serif;
+  --font-body: var(--font-geist-sans), sans-serif;
   --color-ink: #0d0d0d;
   --color-ink-muted: #6b6b6b;
   --color-surface: #f7f7f5;
@@ -16,17 +29,19 @@
   --color-success-light: #f0faf4;
 }
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
+@layer base {
+  * { box-sizing: border-box; margin: 0; padding: 0; }
 
-body {
-  font-family: var(--font-body);
-  background: var(--color-white);
-  color: var(--color-ink);
-  -webkit-font-smoothing: antialiased;
-}
+  body {
+    font-family: var(--font-body);
+    background: var(--color-white);
+    color: var(--color-ink);
+    -webkit-font-smoothing: antialiased;
+  }
 
-h1, h2, h3, h4 {
-  font-family: var(--font-display);
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+  }
 }
 
 /* Scrollbar */

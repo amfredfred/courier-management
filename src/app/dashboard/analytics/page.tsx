@@ -7,6 +7,7 @@ export default async function AnalyticsPage() {
   const [stats, monthlyData] = await Promise.all([getDashboardStats(), getShipmentsByMonth()]);
   const deliveryRate = stats.total > 0 ? Math.round((stats.delivered / stats.total) * 100) : 0;
 
+  // Recharts' <Cell fill> requires a raw SVG color value, not a Tailwind class.
   const statusData = [
     { name: "Pending",    value: stats.pending,    fill: "#e5e5e0" },
     { name: "In Transit", value: stats.in_transit, fill: "#6366f1" },
@@ -15,26 +16,26 @@ export default async function AnalyticsPage() {
   ].filter((d) => d.value > 0);
 
   return (
-    <div style={{ padding: "36px 40px", fontFamily: "var(--font-body)" }}>
-      <div style={{ marginBottom: "32px" }}>
-        <h1 style={{ fontFamily: "var(--font-display)", fontSize: "24px", fontWeight: 800, color: "var(--color-ink)", letterSpacing: "-0.03em", marginBottom: "4px" }}>
+    <div className="p-10">
+      <div className="mb-8">
+        <h1 className="font-extrabold text-2xl text-[var(--color-ink)] tracking-[-0.03em] mb-1">
           Analytics
         </h1>
-        <p style={{ fontSize: "13px", color: "var(--color-ink-muted)", fontWeight: 300 }}>
+        <p className="text-[13px] text-[var(--color-ink-muted)] font-light">
           Performance across all shipments
         </p>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "12px", marginBottom: "24px" }}>
+      <div className="grid grid-cols-4 gap-4 mb-6">
         {[
           { label: "Total",          value: stats.total },
           { label: "Delivered",      value: stats.delivered },
           { label: "Delivery Rate",  value: `${deliveryRate}%` },
           { label: "Failed",         value: stats.failed },
         ].map((s) => (
-          <div key={s.label} style={{ background: "white", border: "1px solid var(--color-border)", borderRadius: "14px", padding: "20px 22px" }}>
-            <p style={{ fontSize: "11px", fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--color-ink-muted)", marginBottom: "10px" }}>{s.label}</p>
-            <p style={{ fontFamily: "var(--font-display)", fontSize: "32px", fontWeight: 800, color: "var(--color-ink)", letterSpacing: "-0.04em", lineHeight: 1 }}>{s.value}</p>
+          <div key={s.label} className="bg-white border border-[var(--color-border)] rounded-2xl p-5">
+            <p className="text-[11px] font-semibold tracking-[0.08em] uppercase text-[var(--color-ink-muted)] mb-2.5">{s.label}</p>
+            <p className="font-extrabold text-[32px] text-[var(--color-ink)] tracking-[-0.04em] leading-none">{s.value}</p>
           </div>
         ))}
       </div>
