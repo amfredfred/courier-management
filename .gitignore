@@ -1,3 +1,7 @@
 /.env.local
 /.next
 /node_modules
+/.open-next
+/.wrangler
+.dev.vars
+cf-build-elevated.log

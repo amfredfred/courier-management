@@ -9,6 +9,10 @@ const nextConfig: NextConfig = {
     },
   },
   images: {
+    // Cloudflare Workers can't run sharp (native binary) for the built-in
+    // image optimizer, and this app doesn't use next/image for any images
+    // it actually serves — disable optimization rather than bundle sharp.
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: "https",
